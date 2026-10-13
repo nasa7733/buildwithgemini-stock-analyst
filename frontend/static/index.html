@@ -181,6 +181,41 @@
     font-size:0.85em;
     color:#0f766e;
   }
+  /* Polished visuals and media outputs */
+  .bubble.markdown-body img {
+    max-width:100%;
+    width:auto;
+    max-height:420px;
+    border-radius:12px;
+    display:block;
+    margin:0.75rem 0;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    border:1px solid #e2e8f0;
+    transition:transform 0.2s ease;
+  }
+  .bubble.markdown-body img:hover {
+    transform:scale(1.01);
+  }
+  .bubble.markdown-body a {
+    color:var(--accent);
+    font-weight:600;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:0.25rem;
+  }
+  .bubble.markdown-body a:hover {
+    color:var(--accent-hover);
+    text-decoration:underline;
+  }
+  .bubble.markdown-body blockquote {
+    border-left:4px solid var(--accent);
+    background:#f0fdf4;
+    margin:0.6rem 0;
+    padding:0.5rem 0.8rem;
+    border-radius:0 8px 8px 0;
+    color:#1e293b;
+  }
   /* When the reply is an A2UI card, drop the bubble chrome so the card stands alone. */
   .bubble.rich { background:transparent; border:none; padding:0; max-width:100%; white-space:normal; box-shadow:none; }
   
