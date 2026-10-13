@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>STOCK ANALYST</title>
+<!-- Markdown parser & sanitizer for clear tables, lists, and bold text -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
 <!-- Optional: used only to draw A2UI Icon components. If it can't load (offline/
      corp network), icons fall back to showing their name as text. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
@@ -99,13 +102,12 @@
   }
   .bubble {
     display:inline-block;
-    padding:0.75rem 1rem;
+    padding:0.85rem 1.1rem;
     border-radius:14px;
     background:#fff;
     border:1px solid var(--border);
     text-align:left;
-    max-width:85%;
-    white-space:pre-wrap;
+    max-width:92%;
     line-height:1.5;
     box-shadow:0 1px 2px rgba(0,0,0,0.04);
   }
@@ -114,9 +116,70 @@
     color:#fff;
     border:none;
     border-bottom-right-radius:4px;
+    white-space:pre-wrap;
   }
   .msg.agent .bubble {
     border-bottom-left-radius:4px;
+  }
+  /* Formatted Markdown content inside agent bubbles */
+  .bubble.markdown-body {
+    overflow-x:auto;
+  }
+  .bubble.markdown-body p { margin:0.35rem 0; }
+  .bubble.markdown-body p:first-child { margin-top:0; }
+  .bubble.markdown-body p:last-child { margin-bottom:0; }
+  .bubble.markdown-body h1, .bubble.markdown-body h2, .bubble.markdown-body h3 {
+    margin:0.6rem 0 0.3rem;
+    font-size:1.1rem;
+    font-weight:700;
+    color:var(--text-primary);
+  }
+  .bubble.markdown-body h2 { font-size:1.02rem; }
+  .bubble.markdown-body ul, .bubble.markdown-body ol {
+    margin:0.4rem 0;
+    padding-left:1.4rem;
+  }
+  .bubble.markdown-body li { margin:0.2rem 0; }
+  /* Clean, responsive financial tables */
+  .bubble.markdown-body table {
+    width:100%;
+    border-collapse:collapse;
+    margin:0.75rem 0;
+    font-size:0.88rem;
+    background:#ffffff;
+    border-radius:8px;
+    overflow:hidden;
+    border:1px solid #e2e8f0;
+  }
+  .bubble.markdown-body th {
+    background:#f1f5f9;
+    color:#334155;
+    font-weight:600;
+    text-align:left;
+    padding:0.6rem 0.75rem;
+    border-bottom:2px solid #cbd5e1;
+    white-space:nowrap;
+  }
+  .bubble.markdown-body td {
+    padding:0.55rem 0.75rem;
+    border-bottom:1px solid #e2e8f0;
+    color:#1e293b;
+  }
+  .bubble.markdown-body tr:last-child td {
+    border-bottom:none;
+  }
+  .bubble.markdown-body tr:nth-child(even) {
+    background:#f8fafc;
+  }
+  .bubble.markdown-body tr:hover {
+    background:#f0fdf4;
+  }
+  .bubble.markdown-body code {
+    background:#f1f5f9;
+    padding:0.15rem 0.35rem;
+    border-radius:4px;
+    font-size:0.85em;
+    color:#0f766e;
   }
   /* When the reply is an A2UI card, drop the bubble chrome so the card stands alone. */
   .bubble.rich { background:transparent; border:none; padding:0; max-width:100%; white-space:normal; box-shadow:none; }
@@ -391,7 +454,15 @@ function renderReply(b, parts) {
   const a2ui = parts.filter(p => p && p.kind === "a2ui" && p.data).map(p => p.data);
 
   const textStr = texts.join("\n").trim();
-  if (textStr) b.appendChild(el("div", null, textStr));
+  if (textStr) {
+    b.classList.add("markdown-body");
+    if (typeof marked !== "undefined" && typeof DOMPurify !== "undefined") {
+      const rawHtml = marked.parse(textStr, { gfm: true, breaks: true });
+      b.innerHTML = DOMPurify.sanitize(rawHtml);
+    } else {
+      b.appendChild(el("div", null, textStr));
+    }
+  }
 
   if (a2ui.length) {
     b.classList.add("rich");
